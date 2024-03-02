@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Centercolor</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width">
+		<style>
+			.IoW > * {
+				display: block;
+				margin-bottom: 10px;
+			}
+			.net_menu > *, .file_ > *, .net_ > *, .final > * {
+				display: inline-block;
+				margin-right: 5px;
+			}
+			* {
+				background-color: black;
+				color: white;
+				font-family: system-ui;
+			}
+			#color {
+				font-weight: bold;
+				text-transform: uppercase;
+				color: black;
+			}
+			.net_menu button {
+				background-color: green;
+				color: white;
+			}
+			.net_menu {
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="IoW">
+			<div class="file_">
+				<input type="radio" onchange="useFileNotNet()" id="file" checked>
+				<span>Локальный файл</span>
+			</div>
+			<div class="net_">
+				<input type="radio" onchange="useNetNotFile()" id="net">
+				<span>Сеть</span>
+			</div>			
+			<div class="file_menu">
+				<input type="file" onchange="processLocalFile()" accept=".jpg,.jpeg,.png,.bmp,.tiff" id="image">
+			</div>
+			<div class="net_menu">
+				<input type="text" id="image_url" placeholder="URL-адрес картинки...">
+				<button onclick="loadNetImage()">Вперёд!</button>
+			</div>
+			<div class="final">
+				<span>Результат:</span>
+				<input type="text" id="color" readonly>
+			</div>
+		</div>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jimp/0.22.10/jimp.min.js"></script>
+		<script>
+			let fileReader = new FileReader();
+			function useFileNotNet() {
+				file.checked = true; net.checked = false;
+				document.querySelector(".file_menu").style.display = "block";
+				document.querySelector(".net_menu").style.display = "none";
+			}
+			function useNetNotFile() {
+				net.checked = true; file.checked = false;
+				document.querySelector(".file_menu").style.display = "none";
+				document.querySelector(".net_menu").style.display = "block";
+			}
+			function processLocalFile() {
+				fileReader.readAsDataURL(image.files[0])
+				fileReader.onload = function() {
+					Jimp.read(fileReader.result).then(function(pic) {
+						pic.crop(0,0,pic.bitmap.width/2,pic.bitmap.height/2)
+						pic.rotate(180)
+						pic.crop(0,0,1,1)
+						let colorDictionary = Jimp.intToRGBA(pic.getPixelColour(1,1))
+						console.log(colorDictionary)
+						let r = colorDictionary.r;
+						let g = colorDictionary.g;
+						let b = colorDictionary.b;
+						document.getElementById("color").style.backgroundColor = `rgb(${r},${g},${b})`
+						let cd = [r,g,b]
+						for (let inc in cd) {
+							let incc = cd[inc].toString(16)
+							if (incc.length === 2) {
+								cd[inc] = incc;
+							} else {
+								cd[inc] = "0" + incc;
+							}
+						}
+						document.getElementById("color").value = "#" + cd[0].toUpperCase() + cd[1].toUpperCase() + cd[2].toUpperCase()
+					})
+				}
+			}
+			function loadNetImage() {
+				Jimp.read(document.getElementById("image_url").value).then(function(pic) {
+					pic.crop(0,0,pic.bitmap.width/2,pic.bitmap.height/2)
+					pic.rotate(180)
+					pic.crop(0,0,1,1)
+					let colorDictionary = Jimp.intToRGBA(pic.getPixelColour(1,1))
+					console.log(colorDictionary)
+					let r = colorDictionary.r;
+					let g = colorDictionary.g;
+					let b = colorDictionary.b;
+					document.getElementById("color").style.backgroundColor = `rgb(${r},${g},${b})`
+					let cd = [r,g,b]
+					for (let inc in cd) {
+						let incc = cd[inc].toString(16)
+							if (incc.length === 2) {
+								cd[inc] = incc;
+							} else {
+								cd[inc] = "0" + incc;
+							}
+						}
+					document.getElementById("color").value = "#" + cd[0].toUpperCase() + cd[1].toUpperCase() + cd[2].toUpperCase()
+					})
+					}
+		</script>
+	</body>
+</html>
