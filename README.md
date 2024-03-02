@@ -10,3 +10,4 @@
 
 **TODO:**
 * Remove network images support (because it is does not work in Android browsers)
+* Translate application in English
