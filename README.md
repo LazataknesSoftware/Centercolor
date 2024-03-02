@@ -9,4 +9,4 @@
 ---
 
 **TODO:**
-* Remove network images support
+* Remove network images support (because it is does not work in Android browsers)
